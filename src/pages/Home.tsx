@@ -53,7 +53,7 @@ export default function Home() {
     return (
         <div className="min-h-screen grid-bg">
             {/* Hero Section */}
-            <section className="text-center pt-16 sm:pt-24 pb-8 sm:pb-12 px-4">
+            <section className="text-center pt-20 sm:pt-24 pb-8 sm:pb-12 px-4">
                 {/* Title */}
                 <h1 className="text-5xl sm:text-7xl md:text-9xl text-fg tracking-tight font-brand italic whitespace-nowrap">
                     <HoverBoldText text="dedicatedto.me" baseWeight={400} hoverWeight={800} radius={3} />

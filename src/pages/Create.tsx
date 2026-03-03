@@ -83,13 +83,13 @@ export default function Create() {
             {/* Back button — matches FAB style, fixed top-left */}
             <Link
                 to="/"
-                className="fixed top-5 left-5 z-50 w-14 h-14 rounded-full bg-accent/80 text-fg flex items-center justify-center hover:bg-accent transition-all duration-200 cursor-pointer shadow-lg backdrop-blur-sm"
+                className="fixed top-5 left-5 z-50 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-accent/80 text-fg flex items-center justify-center hover:bg-accent transition-all duration-200 cursor-pointer shadow-lg backdrop-blur-sm"
             >
-                <ArrowLeft className="w-6 h-6" />
+                <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
             </Link>
 
             {/* Header */}
-            <div className="text-center pt-10 sm:pt-14 pb-6 px-4">
+            <div className="text-center pt-18 sm:pt-14 pb-6 px-4">
                 <h1 className="text-5xl sm:text-6xl md:text-7xl font-brand italic text-fg whitespace-nowrap">
                     <HoverBoldText text="dedicate a song" baseWeight={400} hoverWeight={800} radius={3} />
                 </h1>
