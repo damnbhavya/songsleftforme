@@ -94,4 +94,5 @@ input:focus-visible {
 
 html {
   scrollbar-width: none;
+  scroll-behavior: smooth;
 }

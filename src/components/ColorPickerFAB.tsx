@@ -31,7 +31,19 @@ export default function ColorPickerFAB() {
         setVar('--color-player-bg', t.dark); setVar('--color-card-bg', t.cardBg)
         setVar('--color-card-bg-hover', t.cardHover)
         setOpen(false)
+        try { localStorage.setItem('theme', t.name) } catch { }
     }, [])
+
+    // Restore saved theme on mount
+    useEffect(() => {
+        try {
+            const saved = localStorage.getItem('theme')
+            if (saved) {
+                const theme = THEMES.find(t => t.name === saved)
+                if (theme) apply(theme)
+            }
+        } catch { }
+    }, [apply])
 
     return (
         <div ref={ref} className="fixed top-5 right-5 z-50">

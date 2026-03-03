@@ -99,3 +99,49 @@ function mapTracks(data: any): SpotifyTrack[] {
 export function isSpotifySearchConfigured(): boolean {
     return CLIENT_ID !== '' && CLIENT_SECRET !== ''
 }
+
+export async function getTrackById(trackId: string): Promise<SpotifyTrack | null> {
+    if (!CLIENT_ID || !CLIENT_SECRET) return null
+
+    try {
+        const token = await getAccessToken()
+        const response = await fetch(
+            `https://api.spotify.com/v1/tracks/${trackId}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+        )
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                accessToken = null
+                tokenExpiry = 0
+                const retryToken = await getAccessToken()
+                const retryResponse = await fetch(
+                    `https://api.spotify.com/v1/tracks/${trackId}`,
+                    { headers: { Authorization: `Bearer ${retryToken}` } }
+                )
+                if (!retryResponse.ok) return null
+                const track = await retryResponse.json()
+                return mapSingleTrack(track)
+            }
+            return null
+        }
+
+        const track = await response.json()
+        return mapSingleTrack(track)
+    } catch (err) {
+        console.error('Spotify getTrack error:', err)
+        return null
+    }
+}
+
+function mapSingleTrack(track: any): SpotifyTrack {
+    return {
+        id: track.id,
+        name: track.name,
+        artists: track.artists.map((a: any) => a.name).join(', '),
+        albumName: track.album?.name || '',
+        albumImage: track.album?.images?.[0]?.url || track.album?.images?.[1]?.url || '',
+        url: track.external_urls?.spotify || `https://open.spotify.com/track/${track.id}`,
+        previewUrl: track.preview_url,
+    }
+}

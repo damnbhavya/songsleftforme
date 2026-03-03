@@ -89,7 +89,7 @@ export default function Create() {
             </Link>
 
             {/* Header */}
-            <div className="text-center pt-18 sm:pt-14 pb-6 px-4">
+            <div className="text-center pt-20 pb-6 px-4">
                 <h1 className="text-5xl sm:text-6xl md:text-7xl font-brand italic text-fg whitespace-nowrap">
                     <HoverBoldText text="dedicate a song" baseWeight={400} hoverWeight={800} radius={3} />
                 </h1>

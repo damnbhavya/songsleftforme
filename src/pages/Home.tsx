@@ -53,14 +53,14 @@ export default function Home() {
     return (
         <div className="min-h-screen grid-bg">
             {/* Hero Section */}
-            <section className="text-center pt-20 sm:pt-24 pb-8 sm:pb-12 px-4">
+            <section className="text-center pt-20 pb-8 sm:pb-12 px-4">
                 {/* Title */}
                 <h1 className="text-5xl sm:text-7xl md:text-9xl text-fg tracking-tight font-brand italic whitespace-nowrap">
                     <HoverBoldText text="dedicatedto.me" baseWeight={400} hoverWeight={800} radius={3} />
                 </h1>
 
                 {/* Subtitle — CabinetGrotesk (font-sans) */}
-                <p className="mt-5 text-xl sm:text-2xl text-fg/80 max-w-lg mx-auto">
+                <p className="mt-5 text-xl sm:text-2xl text-fg/80 max-w-lg mx-auto" style={{ wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
                     <HoverBoldText text="for songs you never had the courage to send." baseWeight={400} hoverWeight={700} radius={3} />
                 </p>
 
@@ -160,7 +160,7 @@ export default function Home() {
                 ) : (
                     <>
                         {/* Dedication count */}
-                        <p className="text-center text-base text-fg/35 mb-10 font-semibold">
+                        <p className="text-center text-base text-fg/35 mt-4 mb-10 font-semibold">
                             {filteredSubmissions.length.toLocaleString()} dedication{filteredSubmissions.length !== 1 ? 's' : ''}
                             {searchQuery && ` matching "${searchQuery}"`}
                         </p>
