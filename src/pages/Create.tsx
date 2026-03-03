@@ -41,7 +41,7 @@ export default function Create() {
                 : null
             const sanitizedName = recipientName.trim()
                 ? DOMPurify.sanitize(recipientName.trim())
-                : null
+                : 'Someone'
 
             const { error } = await supabase.from('submissions').insert({
                 recipient_name: sanitizedName,

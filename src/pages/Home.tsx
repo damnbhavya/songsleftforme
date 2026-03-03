@@ -43,10 +43,10 @@ export default function Home() {
         const query = searchQuery.trim().toLowerCase()
         return submissions.filter((s) => {
             const nameMatch = s.recipient_name?.toLowerCase().includes(query)
-            const songMatch = s.spotify_url?.toLowerCase().includes(query) || s.message?.toLowerCase().includes(query)
+            const messageMatch = s.message?.toLowerCase().includes(query)
             if (searchFilter === 'name') return nameMatch
-            if (searchFilter === 'song') return songMatch
-            return nameMatch || songMatch
+            if (searchFilter === 'song') return messageMatch
+            return nameMatch || messageMatch
         })
     }, [submissions, searchQuery, searchFilter])
 
