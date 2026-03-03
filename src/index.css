@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+/* Brand font — Source Serif 4 (heading only) */
+@font-face {
+  font-family: 'SourceSerif4';
+  src: url('/font/SourceSerif4.ttf') format('truetype');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+/* Body font — Cabinet Grotesk */
+@font-face {
+  font-family: 'CabinetGrotesk';
+  src: url('/font/CabinetGrotesk.ttf') format('truetype');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@theme {
+  --color-bg: #FF3F6A;
+  --color-bg-light: #FF6B8A;
+  --color-fg: #FFDAE2;
+  --color-fg-dark: #B71036;
+  --color-fg-muted: rgba(255, 241, 228, 0.6);
+  --color-accent: #B71036;
+  --color-accent-hover: #9A0D2E;
+  --color-accent-light: rgba(183, 16, 54, 0.15);
+  --color-white: #FFFFFF;
+  --color-card-bg: #FFDAE2;
+  --color-card-bg-hover: #FFB5C5;
+  --color-card-shadow: rgba(0, 0, 0, 0.1);
+  --color-card-shadow-hover: rgba(0, 0, 0, 0.2);
+  --color-player-bg: #B71036;
+
+  --font-sans: 'CabinetGrotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-brand: 'SourceSerif4', serif;
+
+  --shadow-card: 0 4px 20px var(--color-card-shadow);
+  --shadow-card-hover: 0 8px 32px var(--color-card-shadow-hover);
+}
+
+/* Base styles */
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+  min-height: 100vh;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Subtle grid background — fixed, full viewport, centered */
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(255, 241, 228, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 241, 228, 0.07) 1px, transparent 1px);
+  background-size: 48px 48px;
+  background-position: center center;
+  background-attachment: fixed;
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 2px solid var(--color-fg);
+  outline-offset: 2px;
+}
+
+input:focus-visible {
+  outline: none;
+}
+
+/* Animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hide scrollbar */
+::-webkit-scrollbar {
+  display: none;
+}
+
+html {
+  scrollbar-width: none;
+}
