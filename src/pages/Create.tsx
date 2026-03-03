@@ -41,7 +41,7 @@ export default function Create() {
                 : null
             const sanitizedName = recipientName.trim()
                 ? DOMPurify.sanitize(recipientName.trim())
-                : 'Someone'
+                : 'someone'
 
             const { error } = await supabase.from('submissions').insert({
                 recipient_name: sanitizedName,
@@ -70,9 +70,8 @@ export default function Create() {
         return (
             <div className="min-h-screen grid-bg flex items-center justify-center px-4">
                 <div className="text-center">
-                    <h2 className="text-4xl font-brand italic font-bold text-fg mb-3">Sent into the void</h2>
-                    <p className="text-fg/60 text-lg font-medium">Your dedication has been shared anonymously.</p>
-                    <p className="text-sm text-fg/40 mt-3">Redirecting to home...</p>
+                    <h2 className="text-4xl font-brand italic font-bold text-fg mb-3">your song is now out there.</h2>
+                    <p className="text-sm text-fg/40 mt-3">returning home...</p>
                 </div>
             </div>
         )
@@ -101,15 +100,15 @@ export default function Create() {
                     {/* To: Name — accent bg pill */}
                     <div className="mb-5">
                         <div className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-accent">
-                            <span className="text-base font-bold text-fg">To:</span>
+                            <span className="text-base font-bold text-fg">to:</span>
                             <div className="relative">
                                 {/* Hidden measuring span */}
                                 <span className="invisible text-base font-bold whitespace-pre" aria-hidden="true">
-                                    {recipientName || 'Someone'}
+                                    {recipientName || 'someone'}
                                 </span>
                                 <input
                                     type="text"
-                                    placeholder="Someone"
+                                    placeholder="someone"
                                     maxLength={MAX_NAME_LENGTH}
                                     value={recipientName}
                                     onChange={(e) => setRecipientName(e.target.value)}
@@ -122,15 +121,14 @@ export default function Create() {
                     {/* Song Search / Spotify Preview */}
                     <div className="mb-5">
                         {spotifyUrl && isValidSpotifyUrl(spotifyUrl) ? (
-                            <div className="relative">
+                            <div>
                                 <SpotifyEmbed url={spotifyUrl} compact />
                                 <button
                                     type="button"
                                     onClick={() => setSpotifyUrl('')}
-                                    className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-fg-dark/80 text-card-bg flex items-center justify-center text-xs font-bold cursor-pointer hover:bg-fg-dark transition-colors"
-                                    title="Remove song"
+                                    className="mt-2 text-xs font-medium text-fg-dark/50 hover:text-fg-dark/80 transition-colors cursor-pointer"
                                 >
-                                    x
+                                    remove
                                 </button>
                             </div>
                         ) : (
@@ -144,7 +142,7 @@ export default function Create() {
                     {/* Message — rounded border, always visible */}
                     <div className="mb-5">
                         <textarea
-                            placeholder="What you wish you could say..."
+                            placeholder="what you wish you could say..."
                             rows={3}
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
@@ -186,7 +184,7 @@ export default function Create() {
                             Sending...
                         </span>
                     ) : (
-                        'Send into the void'
+                        'share'
                     )}
                 </button>
             </form>

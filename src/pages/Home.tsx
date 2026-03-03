@@ -56,11 +56,11 @@ export default function Home() {
             <section className="text-center pt-20 pb-8 sm:pb-12 px-4">
                 {/* Title */}
                 <h1 className="text-5xl sm:text-7xl md:text-9xl text-fg tracking-tight font-brand italic whitespace-nowrap">
-                    <HoverBoldText text="dedicatedto.me" baseWeight={400} hoverWeight={800} radius={3} />
+                    <HoverBoldText text="songs left for me" baseWeight={400} hoverWeight={800} radius={3} />
                 </h1>
 
                 {/* Subtitle — CabinetGrotesk (font-sans) */}
-                <p className="mt-5 text-xl sm:text-2xl text-fg/80 max-w-lg mx-auto" style={{ wordBreak: 'keep-all', overflowWrap: 'break-word' }}>
+                <p className="mt-5 text-xl sm:text-2xl text-fg/80 max-w-lg mx-auto">
                     <HoverBoldText text="for songs you never had the courage to send." baseWeight={400} hoverWeight={700} radius={3} />
                 </p>
 
@@ -73,7 +73,7 @@ export default function Home() {
                         </div>
                         <input
                             type="text"
-                            placeholder={searchFilter === 'name' ? 'Search by name' : searchFilter === 'song' ? 'Search by song' : 'Search for a name or song'}
+                            placeholder={searchFilter === 'name' ? 'search by name' : searchFilter === 'song' ? 'search by song' : 'search for a name or song'}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full h-11 pl-12 pr-4 rounded-full bg-card-bg text-fg-dark placeholder:text-fg-dark/40 outline-none ring-0 border-2 border-transparent focus:border-accent transition-all duration-200 text-base font-medium"
@@ -88,11 +88,11 @@ export default function Home() {
                                     }`}
                             >
                                 <Filter className="w-4 h-4" strokeWidth={2.5} />
-                                Filter
+                                filter
                             </button>
                             {showFilterMenu && (
                                 <div className="absolute top-12 right-0 bg-player-bg rounded-2xl shadow-lg border border-fg/10 p-2 min-w-[150px] z-10 flex flex-col gap-1">
-                                    {([['all', 'All'], ['name', 'By name'], ['song', 'By song']] as const).map(([key, label]) => (
+                                    {([['all', 'all'], ['name', 'by name'], ['song', 'by song']] as const).map(([key, label]) => (
                                         <button
                                             key={key}
                                             onClick={() => { setSearchFilter(key); setShowFilterMenu(false) }}
@@ -110,7 +110,7 @@ export default function Home() {
                         to="/create"
                         className="flex-shrink-0 w-full sm:w-auto text-center flex items-center justify-center h-11 px-8 bg-accent text-fg rounded-full text-base font-bold hover:bg-accent-hover transition-all duration-200 shadow-sm hover:shadow-md"
                     >
-                        Create
+                        create
                     </Link>
                 </div>
             </section>
@@ -124,7 +124,7 @@ export default function Home() {
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                             </svg>
-                            <span>Loading dedications…</span>
+                            <span>loading dedications…</span>
                         </div>
                     </div>
                 ) : error ? (
@@ -141,19 +141,19 @@ export default function Home() {
                     <div className="text-center py-16">
 
                         <h2 className="text-2xl font-bold text-fg mb-3">
-                            {searchQuery ? 'No matches found' : 'No dedications yet'}
+                            {searchQuery ? 'no matches found' : 'no dedications yet'}
                         </h2>
                         <p className="text-fg-muted text-lg mb-6">
                             {searchQuery
-                                ? 'No results found. Try dedicating a song instead!'
-                                : 'Be the first to dedicate a song to someone special'}
+                                ? 'no results found. try dedicating a song instead!'
+                                : 'be the first to dedicate a song to someone special'}
                         </p>
                         {!searchQuery && (
                             <Link
                                 to="/create"
                                 className="inline-flex items-center gap-2 px-8 py-4 bg-accent text-fg rounded-full text-lg font-bold hover:bg-accent-hover transition-all duration-200 shadow-md hover:shadow-lg"
                             >
-                                Create the first one
+                                create the first one
                             </Link>
                         )}
                     </div>

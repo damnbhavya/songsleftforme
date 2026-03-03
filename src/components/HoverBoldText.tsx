@@ -161,27 +161,56 @@ export default function HoverBoldText({
         }
     }, [])
 
+    // Group characters into words so words don't break across lines
+    const words = text.split(' ')
+    let charIndex = 0
+
     return (
         <span
             ref={containerRef}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            className={`inline-block cursor-default ${className}`}
+            className={`inline cursor-default ${className}`}
+            style={{ wordBreak: 'keep-all', overflowWrap: 'break-word' }}
             aria-label={text}
         >
-            {text.split('').map((char, i) => (
-                <span
-                    key={i}
-                    ref={(el) => { charRefs.current[i] = el }}
-                    style={{
-                        fontWeight: charWeights[i],
-                        display: 'inline-block',
-                        ...(char === ' ' ? { width: '0.3em' } : {}),
-                    }}
-                >
-                    {char === ' ' ? '\u00A0' : char}
-                </span>
-            ))}
+            {words.map((word, wi) => {
+                const startIdx = charIndex
+                charIndex += word.length + 1 // +1 for space
+
+                return (
+                    <span key={wi} style={{ whiteSpace: 'nowrap' }}>
+                        {word.split('').map((char, ci) => {
+                            const i = startIdx + ci
+                            return (
+                                <span
+                                    key={i}
+                                    ref={(el) => { charRefs.current[i] = el }}
+                                    style={{
+                                        fontWeight: charWeights[i],
+                                        display: 'inline-block',
+                                    }}
+                                >
+                                    {char}
+                                </span>
+                            )
+                        })}
+                        {/* Space between words */}
+                        {wi < words.length - 1 && (
+                            <span
+                                ref={(el) => { charRefs.current[startIdx + word.length] = el }}
+                                style={{
+                                    fontWeight: charWeights[startIdx + word.length],
+                                    display: 'inline-block',
+                                    width: '0.3em',
+                                }}
+                            >
+                                {'\u00A0'}
+                            </span>
+                        )}
+                    </span>
+                )
+            })}
         </span>
     )
 }

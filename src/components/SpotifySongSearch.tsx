@@ -81,7 +81,7 @@ export default function SpotifySongSearch({ onTrackSelect, currentUrl, className
                 </div>
                 <input
                     type="text"
-                    placeholder="Search for a song or paste a Spotify link..."
+                    placeholder="search for a song or paste link..."
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     onFocus={() => results.length > 0 && setShowDropdown(true)}
