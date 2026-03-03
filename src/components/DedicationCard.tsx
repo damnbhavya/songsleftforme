@@ -27,17 +27,17 @@ export default function DedicationCard({ submission }: DedicationCardProps) {
                     </span>
                 </div>
 
+                {/* Player Bar */}
+                <div className="mb-3">
+                    <SpotifyEmbed url={submission.spotify_url} compact />
+                </div>
+
                 {/* Message */}
                 {submission.message && (
                     <p className="text-lg leading-relaxed text-fg-dark/90 font-medium">
                         {submission.message}
                     </p>
                 )}
-            </div>
-
-            {/* Player Bar — prominent, larger */}
-            <div className="px-4 pb-4">
-                <SpotifyEmbed url={submission.spotify_url} compact />
             </div>
         </div>
     )

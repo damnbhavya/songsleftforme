@@ -119,6 +119,28 @@ export default function Create() {
                         </div>
                     </div>
 
+                    {/* Song Search / Spotify Preview */}
+                    <div className="mb-5">
+                        {spotifyUrl && isValidSpotifyUrl(spotifyUrl) ? (
+                            <div className="relative">
+                                <SpotifyEmbed url={spotifyUrl} compact />
+                                <button
+                                    type="button"
+                                    onClick={() => setSpotifyUrl('')}
+                                    className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-fg-dark/80 text-card-bg flex items-center justify-center text-xs font-bold cursor-pointer hover:bg-fg-dark transition-colors"
+                                    title="Remove song"
+                                >
+                                    x
+                                </button>
+                            </div>
+                        ) : (
+                            <SpotifySongSearch
+                                onTrackSelect={(url) => setSpotifyUrl(url)}
+                                currentUrl={spotifyUrl}
+                            />
+                        )}
+                    </div>
+
                     {/* Message — rounded border, always visible */}
                     <div className="mb-5">
                         <textarea
@@ -140,26 +162,6 @@ export default function Create() {
                             </span>
                         </div>
                     </div>
-
-                    {/* Song Search / Spotify Preview */}
-                    {spotifyUrl && isValidSpotifyUrl(spotifyUrl) ? (
-                        <div className="relative">
-                            <SpotifyEmbed url={spotifyUrl} compact />
-                            <button
-                                type="button"
-                                onClick={() => setSpotifyUrl('')}
-                                className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-fg-dark/80 text-card-bg flex items-center justify-center text-xs font-bold cursor-pointer hover:bg-fg-dark transition-colors"
-                                title="Remove song"
-                            >
-                                x
-                            </button>
-                        </div>
-                    ) : (
-                        <SpotifySongSearch
-                            onTrackSelect={(url) => setSpotifyUrl(url)}
-                            currentUrl={spotifyUrl}
-                        />
-                    )}
                 </div>
 
                 {/* Error */}
