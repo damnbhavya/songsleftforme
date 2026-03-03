@@ -161,7 +161,7 @@ export default function Home() {
                     <>
                         {/* Dedication count */}
                         <p className="text-center text-base text-fg/35 mt-4 mb-10 font-semibold">
-                            {filteredSubmissions.length.toLocaleString()} dedication{filteredSubmissions.length !== 1 ? 's' : ''}
+                            {filteredSubmissions.length.toLocaleString()} song{filteredSubmissions.length !== 1 ? 's' : ''} left
                             {searchQuery && ` matching "${searchQuery}"`}
                         </p>
 
