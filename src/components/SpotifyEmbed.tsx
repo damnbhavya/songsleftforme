@@ -48,9 +48,7 @@ async function fetchItunesData(trackTitle: string) {
     try {
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 8000)
-        // Clean the title — Spotify oEmbed returns "Song by Artist"
-        const cleanTitle = trackTitle.replace(/\s+by\s+.+$/i, '').trim() || trackTitle
-        const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(cleanTitle)}&media=music&entity=song&limit=5&country=US`, { signal: controller.signal })
+        const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(trackTitle)}&media=music&entity=song&limit=5&country=US`, { signal: controller.signal })
         clearTimeout(timeoutId)
         if (!res.ok) return { previewUrl: null, albumArt: null, artist: null }
         const data = await res.json()
