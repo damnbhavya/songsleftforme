@@ -128,7 +128,7 @@ export default function SpotifyEmbed({ url, compact = false }: SpotifyEmbedProps
     const height = compact ? 80 : 152
 
     return (
-        <div ref={containerRef} style={{ minHeight: height }} className="relative rounded-xl overflow-hidden">
+        <div ref={containerRef} style={{ minHeight: height, cursor: 'auto' }} className="relative rounded-xl overflow-hidden">
             {/* Skeleton placeholder */}
             {!isLoaded && (
                 <div className="absolute inset-0 bg-fg-dark/10 animate-pulse rounded-xl" />
