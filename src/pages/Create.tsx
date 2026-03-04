@@ -7,7 +7,7 @@ import SpotifySongSearch from '../components/SpotifySongSearch'
 import SpotifyEmbed from '../components/SpotifyEmbed'
 import ColorPickerFAB from '../components/ColorPickerFAB'
 import HoverBoldText from '../components/HoverBoldText'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, AudioLines } from 'lucide-react'
 
 const MAX_MESSAGE_LENGTH = 80
 const MAX_NAME_LENGTH = 25
@@ -17,6 +17,7 @@ export default function Create() {
     const [recipientName, setRecipientName] = useState('')
     const [message, setMessage] = useState('')
     const [spotifyUrl, setSpotifyUrl] = useState('')
+    const [songTitle, setSongTitle] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [submitError, setSubmitError] = useState<string | null>(null)
     const [submitSuccess, setSubmitSuccess] = useState(false)
@@ -47,6 +48,7 @@ export default function Create() {
                 recipient_name: sanitizedName,
                 message: sanitizedMessage,
                 spotify_url: spotifyUrl.trim(),
+                song_title: songTitle || null,
             })
 
             if (error) {
@@ -87,8 +89,16 @@ export default function Create() {
                 <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
             </Link>
 
+            {/* About button — top right */}
+            <Link
+                to="/about"
+                className="fixed top-5 right-5 z-50 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-accent/80 text-fg flex items-center justify-center hover:bg-accent transition-all duration-200 cursor-pointer shadow-lg backdrop-blur-sm"
+            >
+                <AudioLines className="w-5 h-5 sm:w-6 sm:h-6" />
+            </Link>
+
             {/* Header */}
-            <div className="text-center pt-20 pb-6 px-4">
+            <div className="text-center pt-20 pb-6 px-4 animate-fade-up">
                 <h1 className="text-5xl sm:text-6xl md:text-7xl font-brand italic text-fg whitespace-nowrap">
                     <HoverBoldText text="dedicate a song" baseWeight={400} hoverWeight={800} radius={3} />
                 </h1>
@@ -96,7 +106,7 @@ export default function Create() {
 
             {/* Interactive Card Form */}
             <form onSubmit={handleSubmit} className="max-w-lg mx-auto px-6 pb-20">
-                <div className="rounded-3xl bg-card-bg shadow-card p-6 sm:p-8 transition-all duration-300">
+                <div className="rounded-3xl bg-card-bg shadow-card p-6 sm:p-8 transition-all duration-300 animate-fade-up delay-1">
                     {/* To: Name — accent bg pill */}
                     <div className="mb-5">
                         <div className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-accent">
@@ -133,7 +143,7 @@ export default function Create() {
                             </div>
                         ) : (
                             <SpotifySongSearch
-                                onTrackSelect={(url) => setSpotifyUrl(url)}
+                                onTrackSelect={(url, title) => { setSpotifyUrl(url); setSongTitle(title || '') }}
                                 currentUrl={spotifyUrl}
                             />
                         )}
@@ -173,7 +183,7 @@ export default function Create() {
                 <button
                     type="submit"
                     disabled={!isFormValid || isSubmitting}
-                    className="w-full mt-6 h-13 bg-accent text-fg rounded-full font-bold text-lg transition-all duration-200 hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed shadow-md hover:shadow-lg cursor-pointer"
+                    className="w-full mt-6 h-13 bg-accent text-fg rounded-full font-bold text-lg transition-all duration-200 hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed shadow-md hover:shadow-lg cursor-pointer animate-fade-up delay-2"
                 >
                     {isSubmitting ? (
                         <span className="flex items-center justify-center gap-2">

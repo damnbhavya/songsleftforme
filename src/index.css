@@ -40,6 +40,11 @@
 }
 
 /* Base styles */
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
 body {
   font-family: var(--font-sans);
   background-color: var(--color-bg);
@@ -48,19 +53,47 @@ body {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: var(--cursor-default);
 }
 
-html {
-  scroll-behavior: smooth;
+* {
+  cursor: inherit;
 }
 
-/* Subtle grid background — fixed, full viewport, centered */
+/* Allow selection on inputs, textareas, and dedication messages */
+input,
+textarea,
+.selectable {
+  -webkit-user-select: text;
+  user-select: text;
+  cursor: var(--cursor-text);
+}
+
+/* Hand pointer for interactive elements */
+a,
+button,
+[role="button"],
+label,
+select,
+.cursor-pointer {
+  cursor: var(--cursor-pointer);
+}
+
+/* Themed selection highlight */
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-fg);
+}
+
+/* Halftone dot background — fixed, full viewport */
 .grid-bg {
   background-image:
-    linear-gradient(rgba(255, 241, 228, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 241, 228, 0.07) 1px, transparent 1px);
-  background-size: 48px 48px;
-  background-position: center center;
+    radial-gradient(rgba(255, 241, 228, 0.12) 1px, transparent 1px),
+    radial-gradient(rgba(255, 241, 228, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px, 12px 12px;
+  background-position: 0 0, 6px 6px;
   background-attachment: fixed;
 }
 
@@ -74,7 +107,29 @@ input:focus-visible {
   outline: none;
 }
 
-/* Animations */
+/* ─── Entry Animations ─── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 @keyframes slideDown {
   from {
     opacity: 0;
@@ -87,12 +142,54 @@ input:focus-visible {
   }
 }
 
+/* Staggered fade-up for page sections */
+.animate-fade-up {
+  animation: fadeUp 0.6s ease-out both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out both;
+}
+
+/* Stagger delays */
+.delay-1 {
+  animation-delay: 0.1s;
+}
+
+.delay-2 {
+  animation-delay: 0.2s;
+}
+
+.delay-3 {
+  animation-delay: 0.35s;
+}
+
+.delay-4 {
+  animation-delay: 0.5s;
+}
+
+.delay-5 {
+  animation-delay: 0.65s;
+}
+
+/* ─── Parallax ─── */
+.parallax-hero {
+  will-change: transform;
+}
+
+/* ─── Card stagger on scroll ─── */
+.card-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.card-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* Hide scrollbar */
 ::-webkit-scrollbar {
   display: none;
-}
-
-html {
-  scrollbar-width: none;
-  scroll-behavior: smooth;
 }

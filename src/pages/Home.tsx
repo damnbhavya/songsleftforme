@@ -1,10 +1,10 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase, type Submission } from '../lib/supabase'
 import DedicationCard from '../components/DedicationCard'
 import HoverBoldText from '../components/HoverBoldText'
 import ColorPickerFAB from '../components/ColorPickerFAB'
-import { Search, Filter } from 'lucide-react'
+import { Search, Filter, AudioLines } from 'lucide-react'
 
 export default function Home() {
     const [submissions, setSubmissions] = useState<Submission[]>([])
@@ -13,6 +13,7 @@ export default function Home() {
     const [showFilterMenu, setShowFilterMenu] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const heroRef = useRef<HTMLElement>(null)
 
     useEffect(() => {
         async function fetchSubmissions() {
@@ -37,35 +38,66 @@ export default function Home() {
         fetchSubmissions()
     }, [])
 
+    // Parallax scroll effect for hero
+    useEffect(() => {
+        const hero = heroRef.current
+        if (!hero) return
+
+        let ticking = false
+        const onScroll = () => {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    const scrollY = window.scrollY
+                    hero.style.transform = `translateY(${scrollY * 0.3}px)`
+                    hero.style.opacity = `${Math.max(1 - scrollY / 600, 0)}`
+                    ticking = false
+                })
+                ticking = true
+            }
+        }
+
+        window.addEventListener('scroll', onScroll, { passive: true })
+        return () => window.removeEventListener('scroll', onScroll)
+    }, [])
+
     const filteredSubmissions = useMemo(() => {
         if (!searchQuery.trim()) return submissions
 
         const query = searchQuery.trim().toLowerCase()
         return submissions.filter((s) => {
             const nameMatch = s.recipient_name?.toLowerCase().includes(query)
+            const songMatch = s.song_title?.toLowerCase().includes(query)
             const messageMatch = s.message?.toLowerCase().includes(query)
             if (searchFilter === 'name') return nameMatch
-            if (searchFilter === 'song') return messageMatch
-            return nameMatch || messageMatch
+            if (searchFilter === 'song') return songMatch
+            return nameMatch || songMatch || messageMatch
         })
     }, [submissions, searchQuery, searchFilter])
 
     return (
         <div className="min-h-screen grid-bg">
+            {/* About button — top right */}
+            <Link
+                to="/about"
+                className="fixed top-5 right-5 z-50 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-accent/80 text-fg flex items-center justify-center hover:bg-accent transition-all duration-200 cursor-pointer shadow-lg backdrop-blur-sm animate-fade-in"
+            >
+                <AudioLines className="w-5 h-5 sm:w-6 sm:h-6" />
+            </Link>
+
             {/* Hero Section */}
-            <section className="text-center pt-20 pb-8 sm:pb-12 px-4">
+            <section ref={heroRef} className="relative z-30 text-center pt-20 pb-8 sm:pb-12 px-4 parallax-hero">
                 {/* Title */}
-                <h1 className="text-5xl sm:text-7xl md:text-9xl text-fg tracking-tight font-brand italic whitespace-nowrap">
+                <h1 className="text-5xl sm:text-7xl md:text-9xl text-fg tracking-tight font-brand italic whitespace-nowrap animate-fade-up">
                     <HoverBoldText text="songs left for me" baseWeight={400} hoverWeight={800} radius={3} />
                 </h1>
 
-                {/* Subtitle — CabinetGrotesk (font-sans) */}
-                <p className="mt-5 text-xl sm:text-2xl text-fg/80 max-w-lg mx-auto">
-                    <HoverBoldText text="for songs you never had the courage to send." baseWeight={400} hoverWeight={700} radius={3} />
+                {/* Subtitle */}
+                <p className="mt-10 text-xl sm:text-2xl text-fg/90 max-w-lg mx-auto animate-fade-up delay-1">
+                    <HoverBoldText text="for songs you never had the courage to send." baseWeight={400} hoverWeight={1000} radius={3} />
                 </p>
 
                 {/* Search + Filter + Create */}
-                <div className="mt-12 max-w-xl mx-auto flex flex-col sm:flex-row items-center gap-3">
+                <div className="mt-12 max-w-xl mx-auto flex flex-col sm:flex-row items-center gap-3 animate-fade-up delay-2">
                     <div className="w-full sm:flex-1 relative flex items-center gap-2">
                         {/* Search icon on left */}
                         <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
@@ -84,14 +116,14 @@ export default function Home() {
                                 onClick={() => setShowFilterMenu(!showFilterMenu)}
                                 className={`flex items-center gap-1.5 h-11 px-3.5 rounded-full transition-colors cursor-pointer text-base font-semibold ${searchFilter !== 'all'
                                     ? 'bg-accent text-fg'
-                                    : 'bg-card-bg text-fg-dark/50 hover:text-fg-dark/70'
+                                    : 'bg-card-bg text-fg-dark/80 hover:text-fg-dark/100'
                                     }`}
                             >
                                 <Filter className="w-4 h-4" strokeWidth={2.5} />
                                 filter
                             </button>
                             {showFilterMenu && (
-                                <div className="absolute top-12 right-0 bg-player-bg rounded-2xl shadow-lg border border-fg/10 p-2 min-w-[150px] z-10 flex flex-col gap-1">
+                                <div className="absolute top-12 right-0 bg-player-bg rounded-2xl shadow-lg border border-fg/10 p-2 min-w-[150px] z-20 flex flex-col gap-1">
                                     {([['all', 'all'], ['name', 'by name'], ['song', 'by song']] as const).map(([key, label]) => (
                                         <button
                                             key={key}
@@ -116,7 +148,7 @@ export default function Home() {
             </section>
 
             {/* Content */}
-            <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 pb-20">
+            <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 pb-20 animate-fade-up delay-3">
                 {isLoading ? (
                     <div className="flex justify-center py-16">
                         <div className="flex items-center gap-3 text-fg/60 text-lg">
@@ -160,9 +192,9 @@ export default function Home() {
                 ) : (
                     <>
                         {/* Dedication count */}
-                        <p className="text-center text-base text-fg/35 mt-4 mb-10 font-semibold">
-                            {filteredSubmissions.length.toLocaleString()} song{filteredSubmissions.length !== 1 ? 's' : ''} left
-                            {searchQuery && ` matching "${searchQuery}"`}
+                        <p className="text-center text-base text-fg/80 mt-6 mb-6 font-semibold">
+                            <HoverBoldText text={`${filteredSubmissions.length.toLocaleString()} song${filteredSubmissions.length !== 1 ? 's' : ''} shared${searchQuery ? ` matching "${searchQuery}"` : ''}`} baseWeight={400} hoverWeight={1000} radius={3} />
+
                         </p>
 
                         {/* Card Masonry */}
@@ -205,12 +237,39 @@ function MasonryGrid({ items }: { items: Submission[] }) {
         return result
     }, [items, cols])
 
+    // Scroll-reveal for cards
+    const observerRef = useRef<IntersectionObserver | null>(null)
+    const cardRefs = useCallback((node: HTMLDivElement | null) => {
+        if (!node) return
+        if (!observerRef.current) {
+            observerRef.current = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible')
+                            observerRef.current?.unobserve(entry.target)
+                        }
+                    })
+                },
+                { rootMargin: '50px', threshold: 0.1 }
+            )
+        }
+        observerRef.current.observe(node)
+    }, [])
+
+    useEffect(() => {
+        return () => observerRef.current?.disconnect()
+    }, [])
+
     return (
-        <div
-            style={{ columns: cols, columnGap: '2.5rem' }}
-        >
-            {reordered.map((submission) => (
-                <div key={submission.id} className="mb-8 break-inside-avoid">
+        <div style={{ columns: cols, columnGap: '2.5rem' }}>
+            {reordered.map((submission, i) => (
+                <div
+                    key={submission.id}
+                    ref={cardRefs}
+                    className="mb-8 break-inside-avoid card-reveal"
+                    style={{ transitionDelay: `${(i % (cols * 2)) * 80}ms` }}
+                >
                     <DedicationCard submission={submission} />
                 </div>
             ))}

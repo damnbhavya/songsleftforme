@@ -4,6 +4,10 @@ import { BrowserRouter } from 'react-router-dom'
 import { Analytics } from "@vercel/analytics/react"
 import './index.css'
 import App from './App'
+import { applyCursors } from './lib/cursors'
+
+// Initialize cursors with default theme accent
+applyCursors('#B71036')
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

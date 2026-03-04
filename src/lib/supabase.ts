@@ -23,5 +23,6 @@ export interface Submission {
     recipient_name: string | null
     message: string | null
     spotify_url: string
+    song_title: string | null
     created_at: string
 }

@@ -4,7 +4,7 @@ import { isValidSpotifyUrl } from './SpotifyEmbed'
 import { Search } from 'lucide-react'
 
 interface SpotifySongSearchProps {
-    onTrackSelect: (url: string) => void
+    onTrackSelect: (url: string, songTitle?: string) => void
     currentUrl: string
     className?: string
 }
@@ -60,7 +60,7 @@ export default function SpotifySongSearch({ onTrackSelect, currentUrl, className
     }, [query, onTrackSelect])
 
     const handleSelectTrack = (track: SpotifyTrack) => {
-        onTrackSelect(track.url)
+        onTrackSelect(track.url, `${track.name} — ${track.artists}`)
         setQuery(track.name + ' — ' + track.artists)
         setShowDropdown(false)
     }

@@ -34,7 +34,7 @@ export default function DedicationCard({ submission }: DedicationCardProps) {
 
                 {/* Message */}
                 {submission.message && (
-                    <p className="text-lg leading-relaxed text-fg-dark/90 font-medium">
+                    <p className="text-lg leading-relaxed text-fg-dark/90 font-medium selectable">
                         {submission.message}
                     </p>
                 )}

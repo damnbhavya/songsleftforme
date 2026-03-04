@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { PaintBucket } from 'lucide-react'
+import { applyCursors } from '../lib/cursors'
 
 const THEMES = [
     { name: 'Rose', bg: '#FF3F6A', bgLight: '#FF6B8A', dark: '#B71036', darkHover: '#9A0D2E', cardBg: '#FFDAE2', cardHover: '#FFB5C5', fg: '#FFDAE2' },
@@ -30,6 +31,7 @@ export default function ColorPickerFAB() {
         setVar('--color-accent', t.dark); setVar('--color-accent-hover', t.darkHover)
         setVar('--color-player-bg', t.dark); setVar('--color-card-bg', t.cardBg)
         setVar('--color-card-bg-hover', t.cardHover)
+        applyCursors(t.dark)
         setOpen(false)
         try { localStorage.setItem('theme', t.name) } catch { }
     }, [])
@@ -46,7 +48,7 @@ export default function ColorPickerFAB() {
     }, [apply])
 
     return (
-        <div ref={ref} className="fixed top-5 right-5 z-50">
+        <div ref={ref} className="fixed bottom-5 right-5 z-50">
             {/* Toggle */}
             <button
                 onClick={() => setOpen(!open)}
@@ -57,7 +59,7 @@ export default function ColorPickerFAB() {
 
             {/* Dropdown */}
             {open && (
-                <div className="absolute top-16 right-0 flex gap-2 bg-player-bg/90 backdrop-blur-md px-3 py-2.5 rounded-full shadow-lg border border-fg/10">
+                <div className="absolute bottom-16 right-0 flex gap-2 bg-player-bg/90 backdrop-blur-md px-3 py-2.5 rounded-full shadow-lg border border-fg/10">
                     {THEMES.map((t) => (
                         <button
                             key={t.name}
