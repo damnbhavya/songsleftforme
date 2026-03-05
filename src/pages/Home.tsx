@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
+import { useState, useEffect, useLayoutEffect, useMemo, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase, type Submission } from '../lib/supabase'
 import DedicationCard from '../components/DedicationCard'
@@ -13,7 +13,7 @@ export default function Home() {
     const [showFilterMenu, setShowFilterMenu] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
-    const heroRef = useRef<HTMLElement>(null)
+
 
     useEffect(() => {
         async function fetchSubmissions() {
@@ -38,27 +38,7 @@ export default function Home() {
         fetchSubmissions()
     }, [])
 
-    // Parallax scroll effect for hero
-    useEffect(() => {
-        const hero = heroRef.current
-        if (!hero) return
 
-        let ticking = false
-        const onScroll = () => {
-            if (!ticking) {
-                requestAnimationFrame(() => {
-                    const scrollY = window.scrollY
-                    hero.style.transform = `translateY(${scrollY * 0.3}px)`
-                    hero.style.opacity = `${Math.max(1 - scrollY / 600, 0)}`
-                    ticking = false
-                })
-                ticking = true
-            }
-        }
-
-        window.addEventListener('scroll', onScroll, { passive: true })
-        return () => window.removeEventListener('scroll', onScroll)
-    }, [])
 
     const filteredSubmissions = useMemo(() => {
         if (!searchQuery.trim()) return submissions
@@ -85,7 +65,7 @@ export default function Home() {
             </Link>
 
             {/* Hero Section */}
-            <section ref={heroRef} className="relative z-30 text-center pt-20 pb-8 sm:pb-12 px-4 parallax-hero">
+            <section className="relative z-10 text-center pt-20 pb-8 sm:pb-12 px-4">
                 {/* Title */}
                 <h1 className="text-5xl sm:text-7xl md:text-9xl text-fg tracking-tight font-brand italic whitespace-nowrap animate-fade-up">
                     <HoverBoldText text="songs left for me" baseWeight={400} hoverWeight={800} radius={3} />
@@ -123,7 +103,7 @@ export default function Home() {
                                 filter
                             </button>
                             {showFilterMenu && (
-                                <div className="absolute top-12 right-0 bg-player-bg rounded-2xl shadow-lg border border-fg/10 p-2 min-w-[150px] z-20 flex flex-col gap-1">
+                                <div className="absolute top-12 right-0 bg-player-bg rounded-2xl shadow-lg border border-fg/10 p-2 min-w-[150px] z-50 flex flex-col gap-1">
                                     {([['all', 'all'], ['name', 'by name'], ['song', 'by song']] as const).map(([key, label]) => (
                                         <button
                                             key={key}
@@ -209,9 +189,14 @@ export default function Home() {
     )
 }
 
-// Masonry grid: CSS columns for even gaps, JS reordering for row-wise display
+// JS-based masonry: row-wise ordering with equal gaps regardless of card height
+const GAP = 32 // 2rem in px
+
 function MasonryGrid({ items }: { items: Submission[] }) {
     const [cols, setCols] = useState(3)
+    const containerRef = useRef<HTMLDivElement>(null)
+    const cardEls = useRef<Map<string, HTMLDivElement>>(new Map())
+    const [containerHeight, setContainerHeight] = useState(0)
 
     useEffect(() => {
         function update() {
@@ -223,38 +208,88 @@ function MasonryGrid({ items }: { items: Submission[] }) {
         return () => window.removeEventListener('resize', update)
     }, [])
 
-    // Reorder items so CSS columns (which fill top-to-bottom) display them row-wise
-    const reordered = useMemo(() => {
-        if (cols <= 1) return items
-        const rows = Math.ceil(items.length / cols)
-        const result: Submission[] = []
-        for (let col = 0; col < cols; col++) {
-            for (let row = 0; row < rows; row++) {
-                const idx = row * cols + col
-                if (idx < items.length) result.push(items[idx])
-            }
-        }
-        return result
+    // Measure and position cards after render
+    const doLayout = useCallback(() => {
+        const container = containerRef.current
+        if (!container || items.length === 0) return
+
+        const containerWidth = container.offsetWidth
+        const colWidth = (containerWidth - GAP * (cols - 1)) / cols
+        const colHeights = new Array(cols).fill(0)
+
+        // Place each item row-wise: item i goes into column (i % cols)
+        items.forEach((item, i) => {
+            const el = cardEls.current.get(item.id)
+            if (!el) return
+
+            const col = i % cols
+            const x = col * (colWidth + GAP)
+            const y = colHeights[col]
+
+            el.style.position = 'absolute'
+            el.style.left = `${x}px`
+            el.style.top = `${y}px`
+            el.style.width = `${colWidth}px`
+
+            colHeights[col] = y + el.offsetHeight + GAP
+        })
+
+        setContainerHeight(Math.max(...colHeights) - GAP)
     }, [items, cols])
+
+    // Run layout after DOM paint
+    useLayoutEffect(() => {
+        doLayout()
+    }, [doLayout])
+
+    // Re-layout on window resize
+    useEffect(() => {
+        const onResize = () => doLayout()
+        window.addEventListener('resize', onResize)
+        return () => window.removeEventListener('resize', onResize)
+    }, [doLayout])
+
+    // Re-layout when images/embeds inside cards finish loading
+    useEffect(() => {
+        const container = containerRef.current
+        if (!container) return
+
+        const observer = new MutationObserver(() => doLayout())
+        observer.observe(container, { childList: true, subtree: true, attributes: true })
+
+        // Also catch iframe/image loads
+        const onLoad = () => doLayout()
+        container.addEventListener('load', onLoad, true)
+
+        return () => {
+            observer.disconnect()
+            container.removeEventListener('load', onLoad, true)
+        }
+    }, [doLayout])
 
     // Scroll-reveal for cards
     const observerRef = useRef<IntersectionObserver | null>(null)
-    const cardRefs = useCallback((node: HTMLDivElement | null) => {
-        if (!node) return
-        if (!observerRef.current) {
-            observerRef.current = new IntersectionObserver(
-                (entries) => {
-                    entries.forEach((entry) => {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add('visible')
-                            observerRef.current?.unobserve(entry.target)
-                        }
-                    })
-                },
-                { rootMargin: '50px', threshold: 0.1 }
-            )
+    const setCardRef = useCallback((id: string) => (node: HTMLDivElement | null) => {
+        if (node) {
+            cardEls.current.set(id, node)
+            // Scroll-reveal
+            if (!observerRef.current) {
+                observerRef.current = new IntersectionObserver(
+                    (entries) => {
+                        entries.forEach((entry) => {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add('visible')
+                                observerRef.current?.unobserve(entry.target)
+                            }
+                        })
+                    },
+                    { rootMargin: '50px', threshold: 0.1 }
+                )
+            }
+            observerRef.current.observe(node)
+        } else {
+            cardEls.current.delete(id)
         }
-        observerRef.current.observe(node)
     }, [])
 
     useEffect(() => {
@@ -262,12 +297,15 @@ function MasonryGrid({ items }: { items: Submission[] }) {
     }, [])
 
     return (
-        <div style={{ columns: cols, columnGap: '2.5rem' }}>
-            {reordered.map((submission, i) => (
+        <div
+            ref={containerRef}
+            style={{ position: 'relative', height: containerHeight > 0 ? containerHeight : 'auto' }}
+        >
+            {items.map((submission, i) => (
                 <div
                     key={submission.id}
-                    ref={cardRefs}
-                    className="mb-8 break-inside-avoid card-reveal"
+                    ref={setCardRef(submission.id)}
+                    className="card-reveal"
                     style={{ transitionDelay: `${(i % (cols * 2)) * 80}ms` }}
                 >
                     <DedicationCard submission={submission} />
