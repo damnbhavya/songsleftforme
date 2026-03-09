@@ -84,6 +84,9 @@ export default function SpotifyEmbed({ url, compact = false }: SpotifyEmbedProps
     useEffect(() => {
         if (!isVisible || !trackId || !embedRef.current) return
 
+        // Use light theme for Newsprint, dark for everything else
+        const spotifyTheme = document.documentElement.classList.contains('theme-newsprint') ? 0 : 1
+
         ensureSpotifyAPI(() => {
             const IFrameAPI = (window as any).SpotifyIFrameAPI
             if (!IFrameAPI || !embedRef.current) return
@@ -92,7 +95,7 @@ export default function SpotifyEmbed({ url, compact = false }: SpotifyEmbedProps
                 uri: `spotify:track:${trackId}`,
                 width: '100%',
                 height: compact ? 80 : 152,
-                theme: 1,
+                theme: spotifyTheme,
             }
 
             const element = embedRef.current

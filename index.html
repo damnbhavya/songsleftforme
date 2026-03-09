@@ -6,8 +6,7 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Songs Left for Me</title>
-  <meta name="description"
-    content="for songs you never had the courage to send." />
+  <meta name="description" content="for songs you never had the courage to send." />
 
   <!-- Open Graph -->
   <meta property="og:title" content="Songs Left for Me" />
@@ -28,6 +27,9 @@
   <!-- Preconnect for performance -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&display=swap"
+    rel="stylesheet" />
   <link rel="preconnect" href="https://open.spotify.com" />
 
   <!-- Theme color for mobile browsers -->
@@ -35,6 +37,7 @@
 </head>
 
 <body>
+  <script>try { if (localStorage.getItem('theme') === 'Newsprint') document.documentElement.classList.add('theme-newsprint') } catch (e) { }</script>
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
 </body>
