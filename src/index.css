@@ -239,19 +239,19 @@ input:focus-visible {
   border-top: 3px double #1A1A1A;
 }
 
-/* Newspaper-style cards — sharp corners, thin border, flat */
+/* Newspaper-style cards — sharp corners, thin border, offset shadow */
 .theme-newsprint .card-reveal.visible {
   border-radius: 0 !important;
   border: 1px solid #D5D0C4 !important;
-  box-shadow: none !important;
+  box-shadow: 4px 4px 0px #1A1A1A !important;
   background: #FFFDF8 !important;
   transition: all 0.2s ease;
 }
 
 .theme-newsprint .card-reveal.visible:hover {
   border-color: #1A1A1A !important;
-  box-shadow: 4px 4px 0px #1A1A1A !important;
-  transform: translate(-2px, -2px);
+  box-shadow: 10px 10px 0px #1A1A1A !important;
+  transform: translate(-5px, -5px);
 }
 
 /* Card pill — dual tone charcoal */
