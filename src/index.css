@@ -214,16 +214,7 @@ input:focus-visible {
 
 
 
-/* Thin editorial double-rule at top */
-.theme-newsprint .grid-bg::before {
-  content: '';
-  display: block;
-  width: 90%;
-  max-width: 900px;
-  margin: 0 auto;
-  padding-top: 12px;
-  border-top: 3px double #1A1A1A;
-}
+
 
 /* Newspaper-style cards — sharp corners, thin border, offset shadow */
 .theme-newsprint .card-reveal.visible {
