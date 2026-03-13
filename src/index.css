@@ -219,16 +219,29 @@ input:focus-visible {
 /* Newspaper-style cards — sharp corners, thin border, offset shadow */
 .theme-newsprint .card-reveal.visible {
   border-radius: 0 !important;
-  border: 1px solid #D5D0C4 !important;
+  border: 1px solid #1A1A1A !important;
   box-shadow: 4px 4px 0px #1A1A1A !important;
   background: #FFFDF8 !important;
-  transition: all 0.2s ease;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  will-change: transform, box-shadow;
 }
 
 .theme-newsprint .card-reveal.visible:hover {
-  border-color: #1A1A1A !important;
-  box-shadow: 10px 10px 0px #1A1A1A !important;
-  transform: translate(-5px, -5px);
+  box-shadow: 8px 8px 0px #1A1A1A !important;
+  transform: translate(-4px, -4px);
+}
+
+/* Strip inner DedicationCard div so only the wrapper has the effect */
+.theme-newsprint .card-reveal.visible > div {
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+.theme-newsprint .card-reveal.visible > div:hover {
+  box-shadow: none !important;
+  background: transparent !important;
 }
 
 /* Card pill — dual tone charcoal */
@@ -237,14 +250,15 @@ input:focus-visible {
   color: #F5F0E6 !important;
 }
 
-/* Input fields — underline style */
+/* Search input on Home — boxed with shadow */
 .theme-newsprint input[type="text"] {
   border-radius: 0 !important;
-  background: transparent !important;
-  border: none !important;
-  border-bottom: 2px solid #1A1A1A !important;
+  background: #FFFDF8 !important;
+  border: 1px solid #1A1A1A !important;
+  box-shadow: 3px 3px 0px #1A1A1A;
   padding-left: 2.5rem !important;
   color: #1A1A1A !important;
+  transition: all 0.2s ease;
 }
 
 .theme-newsprint input[type="text"]::placeholder {
@@ -253,27 +267,190 @@ input:focus-visible {
 }
 
 .theme-newsprint input[type="text"]:focus {
-  border-bottom-color: #333 !important;
+  border-color: #1A1A1A !important;
+  box-shadow: 6px 6px 0px #1A1A1A;
+  transform: translate(-2px, -2px);
 }
 
-/* Buttons — sharp, editorial */
+/* Name input inside "To:" pill — transparent, no shadow/border */
+.theme-newsprint .bg-accent input[type="text"] {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding-left: 0 !important;
+  color: inherit !important;
+  transform: none !important;
+}
+
+.theme-newsprint .bg-accent input[type="text"]:focus {
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.theme-newsprint .bg-accent input[type="text"]::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Song search input in Create — uses bg-accent */
+.theme-newsprint input.bg-accent {
+  background: #2A2A2A !important;
+  border: 1px solid #1A1A1A !important;
+  box-shadow: 3px 3px 0px #1A1A1A !important;
+  color: #F5F0E6 !important;
+}
+
+.theme-newsprint input.bg-accent::placeholder {
+  color: rgba(245, 240, 230, 0.5) !important;
+}
+
+.theme-newsprint input.bg-accent:focus {
+  box-shadow: 6px 6px 0px #1A1A1A !important;
+  transform: translate(-2px, -2px);
+}
+
+/* Song search dropdown — fix text color */
+.theme-newsprint .bg-accent.rounded-2xl {
+  background: #2A2A2A !important;
+  border: 1px solid #1A1A1A !important;
+}
+
+.theme-newsprint .bg-accent.rounded-2xl button {
+  color: #F5F0E6 !important;
+}
+
+.theme-newsprint .bg-accent.rounded-2xl button p {
+  color: #F5F0E6 !important;
+}
+
+.theme-newsprint .bg-accent.rounded-2xl button p.text-xs {
+  color: rgba(245, 240, 230, 0.6) !important;
+}
+
+/* Light buttons/links — dark shadow */
 .theme-newsprint a.rounded-full,
 .theme-newsprint button.rounded-full {
   border-radius: 0 !important;
+  border: 1px solid #1A1A1A !important;
+  box-shadow: 3px 3px 0px #1A1A1A;
+  transition: all 0.2s ease;
 }
 
-/* Filter dropdown — dark bg with light text */
+.theme-newsprint a.rounded-full:hover,
+.theme-newsprint button.rounded-full:hover {
+  box-shadow: 6px 6px 0px #1A1A1A !important;
+  transform: translate(-2px, -2px);
+}
+
+/* Dark accent buttons — shadow */
+.theme-newsprint .bg-accent.rounded-full,
+.theme-newsprint a.bg-accent,
+.theme-newsprint button.bg-accent {
+  box-shadow: 3px 3px 0px #1A1A1A !important;
+}
+
+.theme-newsprint .bg-accent.rounded-full:hover,
+.theme-newsprint a.bg-accent:hover,
+.theme-newsprint button.bg-accent:hover {
+  box-shadow: 6px 6px 0px #1A1A1A !important;
+}
+
+/* To: pill and accent spans — sharp corners + hover pop-up */
+.theme-newsprint span.bg-accent,
+.theme-newsprint .bg-accent.rounded-full {
+  border-radius: 0 !important;
+  box-shadow: 2px 2px 0px #1A1A1A;
+  border: 1px solid #1A1A1A;
+  transition: all 0.15s ease;
+}
+
+.theme-newsprint span.bg-accent:hover,
+.theme-newsprint .bg-accent.rounded-full:hover {
+  box-shadow: 4px 4px 0px #1A1A1A;
+  transform: translate(-2px, -2px);
+}
+
+/* Icons inside accent buttons — light color */
+.theme-newsprint .bg-accent svg,
+.theme-newsprint .bg-accent\/80 svg {
+  color: #F5F0E6 !important;
+}
+
+/* Textarea in Create — flat, no pop-up */
+.theme-newsprint textarea {
+  border-radius: 0 !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  border-color: #1A1A1A !important;
+  box-shadow: none !important;
+}
+
+.theme-newsprint textarea:focus {
+  border-color: #1A1A1A !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Create form card & About text boxes — pop-up shadow */
+.theme-newsprint .bg-card-bg.shadow-card {
+  border-radius: 0 !important;
+  border: 1px solid #1A1A1A !important;
+  box-shadow: 4px 4px 0px #1A1A1A !important;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  will-change: transform, box-shadow;
+}
+
+.theme-newsprint .bg-card-bg.shadow-card:hover {
+  box-shadow: 8px 8px 0px #1A1A1A !important;
+  transform: translate(-3px, -3px);
+}
+
+/* Filter dropdown — pop-up shadow */
 .theme-newsprint .min-w-\[150px\] {
   background-color: #2A2A2A !important;
-  border-color: #444 !important;
+  border: 1px solid #1A1A1A !important;
+  border-radius: 0 !important;
+  box-shadow: 4px 4px 0px #1A1A1A;
 }
 
 .theme-newsprint .min-w-\[150px\] button {
   color: #F5F0E6 !important;
+  border-radius: 0 !important;
 }
 
 .theme-newsprint .min-w-\[150px\] button:hover {
   background-color: rgba(245, 240, 230, 0.12) !important;
+}
+
+/* Theme picker FAB — pop-up shadow */
+.theme-newsprint .fixed.bottom-5.right-5 > button {
+  border-radius: 0 !important;
+  border: 1px solid #1A1A1A !important;
+  box-shadow: 3px 3px 0px #1A1A1A;
+}
+
+.theme-newsprint .fixed.bottom-5.right-5 > button:hover {
+  box-shadow: 6px 6px 0px #1A1A1A !important;
+  transform: translate(-2px, -2px);
+}
+
+/* Theme picker dropdown — pop-up shadow */
+.theme-newsprint .fixed.bottom-5.right-5 .grid {
+  border-radius: 0 !important;
+  border: 1px solid #1A1A1A !important;
+  box-shadow: 4px 4px 0px #1A1A1A;
+}
+
+/* Color swatch buttons — square with pop-up, no scale */
+.theme-newsprint .fixed.bottom-5.right-5 .grid button {
+  border-radius: 0 !important;
+  border: 1px solid #1A1A1A !important;
+  box-shadow: 2px 2px 0px #1A1A1A;
+  transition: all 0.15s ease;
+}
+
+.theme-newsprint .fixed.bottom-5.right-5 .grid button:hover {
+  box-shadow: 4px 4px 0px #1A1A1A !important;
+  transform: translate(-2px, -2px) scale(1) !important;
 }
 
 /* Selection — dual-tone */
@@ -283,17 +460,9 @@ input:focus-visible {
 }
 
 /* All sharp corners */
-.theme-newsprint .rounded-2xl {
-  border-radius: 0 !important;
-}
-
-.theme-newsprint .rounded-xl {
-  border-radius: 0 !important;
-}
-
-.theme-newsprint .rounded-3xl {
-  border-radius: 0 !important;
-}
+.theme-newsprint .rounded-2xl { border-radius: 0 !important; }
+.theme-newsprint .rounded-xl { border-radius: 0 !important; }
+.theme-newsprint .rounded-3xl { border-radius: 0 !important; }
 
 /* ─── Secret Theme Swatch ─── */
 .secret-theme-swatch {

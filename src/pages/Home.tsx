@@ -13,6 +13,19 @@ export default function Home() {
     const [showFilterMenu, setShowFilterMenu] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const filterRef = useRef<HTMLDivElement>(null)
+
+    // Close filter dropdown on outside click
+    useEffect(() => {
+        if (!showFilterMenu) return
+        const handler = (e: MouseEvent) => {
+            if (filterRef.current && !filterRef.current.contains(e.target as Node)) {
+                setShowFilterMenu(false)
+            }
+        }
+        document.addEventListener('mousedown', handler)
+        return () => document.removeEventListener('mousedown', handler)
+    }, [showFilterMenu])
 
 
     useEffect(() => {
@@ -91,7 +104,7 @@ export default function Home() {
                             className="w-full h-11 pl-12 pr-4 rounded-full bg-card-bg text-fg-dark placeholder:text-fg-dark/40 outline-none ring-0 border-2 border-transparent focus:border-accent transition-all duration-200 text-base font-medium"
                         />
                         {/* Filter Button */}
-                        <div className="relative flex-shrink-0">
+                        <div ref={filterRef} className="relative flex-shrink-0">
                             <button
                                 onClick={() => setShowFilterMenu(!showFilterMenu)}
                                 className={`flex items-center gap-1.5 h-11 px-3.5 rounded-full transition-colors cursor-pointer text-base font-semibold ${searchFilter !== 'all'

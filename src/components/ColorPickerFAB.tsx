@@ -64,7 +64,15 @@ export default function ColorPickerFAB() {
         return () => document.removeEventListener('mousedown', handler)
     }, [open])
 
+    // Safe reload: set flag before reload, check on next load to prevent loop
+    const safeReload = useCallback(() => {
+        sessionStorage.setItem('theme_reloading', '1')
+        location.reload()
+    }, [])
+
     const applyRegular = useCallback((t: typeof THEMES[0]) => {
+        // Check if we're switching away from Newsprint
+        const wasNewsprint = document.documentElement.classList.contains('theme-newsprint')
         // Remove secret theme mode
         document.documentElement.classList.remove('theme-newsprint', 'theme-aurora')
         setVar('--color-bg', t.bg); setVar('--color-bg-light', t.bgLight)
@@ -75,6 +83,8 @@ export default function ColorPickerFAB() {
         applyCursors(t.dark)
         setOpen(false)
         try { localStorage.setItem('theme', t.name) } catch { }
+        // Reload if switching away from Newsprint so Spotify embeds update
+        if (wasNewsprint) { safeReload(); return }
 
         // Track visited themes
         setVisited(prev => {
@@ -91,9 +101,9 @@ export default function ColorPickerFAB() {
             }
             return next
         })
-    }, [])
+    }, [safeReload])
 
-    const applyNewsprint = useCallback(() => {
+    const applyNewsprint = useCallback((userInitiated = false) => {
         const t = NEWSPRINT
         document.documentElement.classList.add('theme-newsprint')
         setVar('--color-bg', t.bg); setVar('--color-bg-light', t.bgLight)
@@ -104,14 +114,18 @@ export default function ColorPickerFAB() {
         applyCursors('#1A1A1A')
         setOpen(false)
         try { localStorage.setItem('theme', 'Newsprint') } catch { }
-    }, [])
+        if (userInitiated) safeReload()
+    }, [safeReload])
 
     // Restore saved theme on mount
     useEffect(() => {
+        // Clear reload flag if present
+        sessionStorage.removeItem('theme_reloading')
+
         try {
             const saved = localStorage.getItem('theme')
             if (saved === 'Newsprint') {
-                applyNewsprint()
+                applyNewsprint(false)
             } else if (saved) {
                 const theme = THEMES.find(t => t.name === saved)
                 if (theme) applyRegular(theme)
@@ -145,7 +159,7 @@ export default function ColorPickerFAB() {
                     {/* Secret Newsprint theme — only shows after all themes visited */}
                     {secretUnlocked && (
                         <button
-                            onClick={applyNewsprint}
+                            onClick={() => applyNewsprint(true)}
                             className={`w-9 h-9 rounded-full cursor-pointer hover:scale-125 transition-all duration-300 secret-theme-swatch ${justUnlocked ? 'secret-theme-reveal' : ''}`}
                             title="📰 Newsprint"
                         />
