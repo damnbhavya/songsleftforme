@@ -203,30 +203,16 @@ input:focus-visible {
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
 }
 
-/* Remove halftone dots */
+/* Dark dotted grid for newspaper feel */
 .theme-newsprint .grid-bg {
-  background-image: none;
+  background-image:
+    radial-gradient(rgba(26, 26, 26, 0.12) 1px, transparent 1px),
+    radial-gradient(rgba(26, 26, 26, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px, 12px 12px;
+  background-position: 0 0, 6px 6px;
 }
 
-/* Heading font — Playfair Display */
-.theme-newsprint h1 {
-  font-family: 'Playfair Display', Georgia, serif !important;
-  font-weight: 900;
-  letter-spacing: -0.02em;
-}
 
-/* Body font — Open Sans */
-.theme-newsprint body,
-.theme-newsprint h2,
-.theme-newsprint h3,
-.theme-newsprint p,
-.theme-newsprint span,
-.theme-newsprint button,
-.theme-newsprint input,
-.theme-newsprint a,
-.theme-newsprint label {
-  font-family: 'Open Sans', sans-serif;
-}
 
 /* Thin editorial double-rule at top */
 .theme-newsprint .grid-bg::before {
