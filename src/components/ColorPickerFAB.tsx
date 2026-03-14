@@ -134,7 +134,7 @@ export default function ColorPickerFAB() {
     }, [applyRegular, applyNewsprint])
 
     return (
-        <div ref={ref} className="fixed bottom-5 right-5 z-50">
+        <div ref={ref} className="fixed bottom-5 right-5 z-[9999]">
             {/* Toggle */}
             <button
                 onClick={() => setOpen(!open)}
