@@ -308,10 +308,12 @@ input:focus-visible {
   transform: translate(-2px, -2px);
 }
 
-/* Song search dropdown — fix text color */
+/* Song search dropdown — fix text color + shadow */
 .theme-newsprint .bg-accent.rounded-2xl {
   background: #2A2A2A !important;
   border: 1px solid #1A1A1A !important;
+  border-radius: 0 !important;
+  box-shadow: 4px 4px 0px #1A1A1A;
 }
 
 .theme-newsprint .bg-accent.rounded-2xl button {
