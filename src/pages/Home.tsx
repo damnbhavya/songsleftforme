@@ -15,7 +15,7 @@ export default function Home() {
     const [error, setError] = useState<string | null>(null)
     const filterRef = useRef<HTMLDivElement>(null)
 
-    // Close filter dropdown on outside click
+    // close filter dropdown on outside click
     useEffect(() => {
         if (!showFilterMenu) return
         const handler = (e: MouseEvent) => {
@@ -69,7 +69,6 @@ export default function Home() {
 
     return (
         <div className="min-h-screen grid-bg">
-            {/* About button — top right */}
             <Link
                 to="/about"
                 className="fixed top-5 right-5 z-50 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-accent/80 text-fg flex items-center justify-center hover:bg-accent transition-all duration-200 cursor-pointer shadow-lg backdrop-blur-sm animate-fade-in"
@@ -77,22 +76,18 @@ export default function Home() {
                 <AudioLines className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </Link>
 
-            {/* Hero Section */}
+            {/* hero */}
             <section className="relative z-10 text-center pt-20 pb-8 sm:pb-12 px-4">
-                {/* Title */}
                 <h1 className="text-5xl sm:text-7xl md:text-9xl text-fg tracking-tight font-brand italic whitespace-nowrap animate-fade-up">
                     <HoverBoldText text="songs left for me" baseWeight={400} hoverWeight={800} radius={3} />
                 </h1>
 
-                {/* Subtitle */}
                 <p className="mt-10 text-xl sm:text-2xl text-fg/90 max-w-lg mx-auto animate-fade-up delay-1">
                     <HoverBoldText text="for songs you never had the courage to send." baseWeight={400} hoverWeight={1000} radius={3} />
                 </p>
 
-                {/* Search + Filter + Create */}
                 <div className="mt-12 max-w-xl mx-auto flex flex-col sm:flex-row items-center gap-3 animate-fade-up delay-2">
                     <div className="w-full sm:flex-1 relative flex items-center gap-2">
-                        {/* Search icon on left */}
                         <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
                             <Search className="w-5 h-5 text-fg-dark/30" strokeWidth={2.5} />
                         </div>
@@ -103,7 +98,6 @@ export default function Home() {
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full h-11 pl-12 pr-4 rounded-full bg-card-bg text-fg-dark placeholder:text-fg-dark/40 outline-none ring-0 border-2 border-transparent focus:border-accent transition-all duration-200 text-base font-medium"
                         />
-                        {/* Filter Button */}
                         <div ref={filterRef} className="relative flex-shrink-0">
                             <button
                                 onClick={() => setShowFilterMenu(!showFilterMenu)}
@@ -140,7 +134,7 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* Content */}
+            {/* feed */}
             <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 pb-20 animate-fade-up delay-3">
                 {isLoading ? (
                     <div className="flex justify-center py-16">
@@ -184,26 +178,24 @@ export default function Home() {
                     </div>
                 ) : (
                     <>
-                        {/* Dedication count */}
                         <p className="text-center text-base text-fg/80 mt-6 mb-6 font-semibold">
                             <HoverBoldText text={`${filteredSubmissions.length.toLocaleString()} song${filteredSubmissions.length !== 1 ? 's' : ''} shared${searchQuery ? ` matching "${searchQuery}"` : ''}`} baseWeight={400} hoverWeight={1000} radius={3} />
 
                         </p>
 
-                        {/* Card Masonry */}
                         <MasonryGrid items={filteredSubmissions} />
                     </>
                 )}
             </section>
 
-            {/* Floating Color Picker */}
             <ColorPickerFAB />
         </div>
     )
 }
 
-// JS-based masonry: row-wise ordering with equal gaps regardless of card height
-const GAP = 32 // 2rem in px
+// js-driven masonry layout — places cards row-by-row into columns
+// (css columns don't preserve row order, so this does it manually)
+const GAP = 32
 
 function MasonryGrid({ items }: { items: Submission[] }) {
     const [cols, setCols] = useState(3)
@@ -211,6 +203,7 @@ function MasonryGrid({ items }: { items: Submission[] }) {
     const cardEls = useRef<Map<string, HTMLDivElement>>(new Map())
     const [containerHeight, setContainerHeight] = useState(0)
 
+    // responsive column count
     useEffect(() => {
         function update() {
             const w = window.innerWidth
@@ -221,7 +214,7 @@ function MasonryGrid({ items }: { items: Submission[] }) {
         return () => window.removeEventListener('resize', update)
     }, [])
 
-    // Measure and position cards after render
+    // measure card heights and absolutely position them in columns
     const doLayout = useCallback(() => {
         const container = containerRef.current
         if (!container || items.length === 0) return
@@ -230,7 +223,7 @@ function MasonryGrid({ items }: { items: Submission[] }) {
         const colWidth = (containerWidth - GAP * (cols - 1)) / cols
         const colHeights = new Array(cols).fill(0)
 
-        // Place each item row-wise: item i goes into column (i % cols)
+        // item i goes into column (i % cols) so the row order is preserved
         items.forEach((item, i) => {
             const el = cardEls.current.get(item.id)
             if (!el) return
@@ -250,19 +243,18 @@ function MasonryGrid({ items }: { items: Submission[] }) {
         setContainerHeight(Math.max(...colHeights) - GAP)
     }, [items, cols])
 
-    // Run layout after DOM paint
+    // run layout after the browser paints
     useLayoutEffect(() => {
         doLayout()
     }, [doLayout])
 
-    // Re-layout on window resize
     useEffect(() => {
         const onResize = () => doLayout()
         window.addEventListener('resize', onResize)
         return () => window.removeEventListener('resize', onResize)
     }, [doLayout])
 
-    // Re-layout when images/embeds inside cards finish loading
+    // re-layout when iframes/images inside cards finish loading
     useEffect(() => {
         const container = containerRef.current
         if (!container) return
@@ -270,7 +262,6 @@ function MasonryGrid({ items }: { items: Submission[] }) {
         const observer = new MutationObserver(() => doLayout())
         observer.observe(container, { childList: true, subtree: true, attributes: true })
 
-        // Also catch iframe/image loads
         const onLoad = () => doLayout()
         container.addEventListener('load', onLoad, true)
 
@@ -280,12 +271,11 @@ function MasonryGrid({ items }: { items: Submission[] }) {
         }
     }, [doLayout])
 
-    // Scroll-reveal for cards
+    // scroll-reveal — cards fade in when they enter the viewport
     const observerRef = useRef<IntersectionObserver | null>(null)
     const setCardRef = useCallback((id: string) => (node: HTMLDivElement | null) => {
         if (node) {
             cardEls.current.set(id, node)
-            // Scroll-reveal
             if (!observerRef.current) {
                 observerRef.current = new IntersectionObserver(
                     (entries) => {

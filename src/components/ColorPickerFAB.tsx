@@ -3,13 +3,11 @@ import { PaintBucket } from 'lucide-react'
 import { applyCursors } from '../lib/cursors'
 
 const THEMES = [
-    // Original themes
     { name: 'Rose', bg: '#FF3F6A', bgLight: '#FF6B8A', dark: '#B71036', darkHover: '#9A0D2E', cardBg: '#FFDAE2', cardHover: '#FFB5C5', fg: '#FFDAE2' },
     { name: 'Ocean', bg: '#3B82F6', bgLight: '#60A5FA', dark: '#1E3A5F', darkHover: '#162D4A', cardBg: '#DBEAFE', cardHover: '#BFDBFE', fg: '#DBEAFE' },
     { name: 'Violet', bg: '#8B5CF6', bgLight: '#A78BFA', dark: '#4C1D95', darkHover: '#3B1578', cardBg: '#EDE9FE', cardHover: '#DDD6FE', fg: '#EDE9FE' },
     { name: 'Emerald', bg: '#10B981', bgLight: '#34D399', dark: '#065F46', darkHover: '#064E3B', cardBg: '#D1FAE5', cardHover: '#A7F3D0', fg: '#D1FAE5' },
     { name: 'Coral', bg: '#FF6B6B', bgLight: '#FF8E8E', dark: '#8B2252', darkHover: '#6E1A40', cardBg: '#FFE0E0', cardHover: '#FFC4C4', fg: '#FFE0E0' },
-    // New themes
     { name: 'Slate', bg: '#546E7A', bgLight: '#78909C', dark: '#263238', darkHover: '#1C262B', cardBg: '#E0E7EA', cardHover: '#C4D1D8', fg: '#ECEFF1' },
     { name: 'Midnight', bg: '#5C6BC0', bgLight: '#7986CB', dark: '#1A237E', darkHover: '#131A60', cardBg: '#E0E3F5', cardHover: '#C5CAEB', fg: '#EDEEF8' },
     { name: 'Amber', bg: '#E6930A', bgLight: '#F0AD4E', dark: '#7A4D00', darkHover: '#5C3A00', cardBg: '#FDF0D5', cardHover: '#FBE2AC', fg: '#FFF8EC' },
@@ -17,7 +15,7 @@ const THEMES = [
     { name: 'Mocha', bg: '#8D6E63', bgLight: '#A1887F', dark: '#3E2723', darkHover: '#2E1B17', cardBg: '#EDDFDB', cardHover: '#D7C4BC', fg: '#F5EEEB' },
 ]
 
-// Secret theme — newspaper / editorial aesthetic
+// hidden theme — newspaper/editorial aesthetic, unlocked after trying all regular themes
 const NEWSPRINT = {
     name: 'Newsprint',
     bg: '#F5F0E6',
@@ -49,12 +47,13 @@ export default function ColorPickerFAB() {
     const [justUnlocked, setJustUnlocked] = useState(false)
     const ref = useRef<HTMLDivElement>(null)
 
-    // Check if all themes have been visited
+    // unlock the secret theme once every regular theme has been clicked
     useEffect(() => {
         const allVisited = THEMES.every(t => visited.has(t.name))
         setSecretUnlocked(allVisited)
     }, [visited])
 
+    // close dropdown when clicking outside
     useEffect(() => {
         if (!open) return
         const handler = (e: MouseEvent) => {
@@ -64,16 +63,14 @@ export default function ColorPickerFAB() {
         return () => document.removeEventListener('mousedown', handler)
     }, [open])
 
-    // Safe reload: set flag before reload, check on next load to prevent loop
+    // flag before reload so we don't get into a loop
     const safeReload = useCallback(() => {
         sessionStorage.setItem('theme_reloading', '1')
         location.reload()
     }, [])
 
     const applyRegular = useCallback((t: typeof THEMES[0]) => {
-        // Check if we're switching away from Newsprint
         const wasNewsprint = document.documentElement.classList.contains('theme-newsprint')
-        // Remove secret theme mode
         document.documentElement.classList.remove('theme-newsprint', 'theme-aurora')
         setVar('--color-bg', t.bg); setVar('--color-bg-light', t.bgLight)
         setVar('--color-fg', t.fg); setVar('--color-fg-dark', t.dark)
@@ -83,17 +80,18 @@ export default function ColorPickerFAB() {
         applyCursors(t.dark)
         setOpen(false)
         try { localStorage.setItem('theme', t.name) } catch { }
-        // Reload if switching away from Newsprint so Spotify embeds update
+
+        // newsprint uses a different spotify embed theme, so we need a full page reload
         if (wasNewsprint) { safeReload(); return }
 
-        // Track visited themes
+        // track which themes the user has seen
         setVisited(prev => {
             const next = new Set(prev)
             const wasAllVisited = THEMES.every(th => next.has(th.name))
             next.add(t.name)
             const nowAllVisited = THEMES.every(th => next.has(th.name))
             saveVisited(next)
-            // Trigger "just unlocked" animation
+            // play the reveal animation if this was the last one
             if (!wasAllVisited && nowAllVisited) {
                 setJustUnlocked(true)
                 setOpen(true)
@@ -114,12 +112,12 @@ export default function ColorPickerFAB() {
         applyCursors('#1A1A1A')
         setOpen(false)
         try { localStorage.setItem('theme', 'Newsprint') } catch { }
+        // reload needed so spotify embeds pick up the dark theme
         if (userInitiated) safeReload()
     }, [safeReload])
 
-    // Restore saved theme on mount
+    // restore saved theme on mount
     useEffect(() => {
-        // Clear reload flag if present
         sessionStorage.removeItem('theme_reloading')
 
         try {
@@ -135,7 +133,6 @@ export default function ColorPickerFAB() {
 
     return (
         <div ref={ref} className="fixed bottom-5 right-5 z-[9999]">
-            {/* Toggle */}
             <button
                 onClick={() => setOpen(!open)}
                 className="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-accent/80 text-fg flex items-center justify-center hover:bg-accent transition-all duration-200 cursor-pointer shadow-lg backdrop-blur-sm"
@@ -143,7 +140,6 @@ export default function ColorPickerFAB() {
                 <PaintBucket className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </button>
 
-            {/* Dropdown */}
             {open && (
                 <div className="absolute bottom-16 right-0 grid grid-cols-5 gap-3 bg-player-bg/90 backdrop-blur-md p-4 rounded-2xl shadow-lg border border-fg/10 min-w-[260px]">
                     {THEMES.map((t) => (
@@ -156,7 +152,7 @@ export default function ColorPickerFAB() {
                         />
                     ))}
 
-                    {/* Secret Newsprint theme — only shows after all themes visited */}
+                    {/* only shows after the user has tried every theme */}
                     {secretUnlocked && (
                         <button
                             onClick={() => applyNewsprint(true)}

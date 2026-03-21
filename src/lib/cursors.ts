@@ -1,5 +1,5 @@
-// Generates SVG data URI cursors with the given stroke color
-// Called on init and whenever the theme changes
+// custom svg cursors that match the active theme
+// re-generated whenever the user switches colors
 
 function encodeSvgCursor(svg: string): string {
     return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`

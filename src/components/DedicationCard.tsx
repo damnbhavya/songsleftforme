@@ -15,9 +15,7 @@ export default function DedicationCard({ submission }: DedicationCardProps) {
 
     return (
         <div className="break-inside-avoid rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-xl group bg-card-bg hover:bg-card-bg-hover shadow-card">
-            {/* Card Content */}
             <div className="px-6 pt-5 pb-3">
-                {/* Header: Recipient pill + Date */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
                     <span className="text-sm font-bold px-4 py-1.5 rounded-full bg-accent text-fg tracking-wide">
                         To: {recipientName}
@@ -27,12 +25,10 @@ export default function DedicationCard({ submission }: DedicationCardProps) {
                     </span>
                 </div>
 
-                {/* Player Bar */}
                 <div className="mb-3">
                     <SpotifyEmbed url={submission.spotify_url} compact />
                 </div>
 
-                {/* Message */}
                 {submission.message && (
                     <p className="text-lg leading-relaxed text-fg-dark/90 font-medium selectable break-all">
                         {submission.message}

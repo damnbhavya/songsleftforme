@@ -8,6 +8,10 @@ interface HoverBoldTextProps {
     radius?: number
 }
 
+/**
+ * per-character font-weight animation that follows the mouse cursor.
+ * on touch devices, it plays an automatic left-to-right wave instead.
+ */
 export default function HoverBoldText({
     text,
     className = '',
@@ -26,7 +30,7 @@ export default function HoverBoldText({
     const isMobileRef = useRef(false)
     const mobileAnimRef = useRef<number | null>(null)
 
-    // Detect mobile (coarse pointer = touch device)
+    // coarse pointer = touch device — skip mouse tracking, use wave animation
     useEffect(() => {
         const mq = window.matchMedia('(pointer: coarse)')
         isMobileRef.current = mq.matches
@@ -35,7 +39,7 @@ export default function HoverBoldText({
         return () => mq.removeEventListener('change', handler)
     }, [])
 
-    // Smooth lerp loop — always running while weights differ from targets
+    // smooth interpolation loop — runs until weights match targets
     const startLerp = useCallback(() => {
         if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current)
 
@@ -48,7 +52,7 @@ export default function HoverBoldText({
                 const next = prev.map((w, i) => {
                     const diff = targets[i] - w
                     if (Math.abs(diff) < 2) return targets[i]
-                    return w + diff * 0.18
+                    return w + diff * 0.18 // lerp factor
                 })
                 animFrameRef.current = requestAnimationFrame(tick)
                 return next
@@ -58,14 +62,14 @@ export default function HoverBoldText({
         animFrameRef.current = requestAnimationFrame(tick)
     }, [])
 
-    // Mobile: looped left-to-right wave animation
+    // mobile: looping left-to-right wave that sweeps across the text
     useEffect(() => {
         const mq = window.matchMedia('(pointer: coarse)')
         if (!mq.matches) return
 
         const chars = text.length
-        const duration = 2500 // ms for one full sweep
-        const pauseBetween = 800 // ms pause between sweeps
+        const duration = 2500
+        const pauseBetween = 800
         let startTime: number | null = null
         let pausing = false
         let pauseStart = 0
@@ -82,10 +86,10 @@ export default function HoverBoldText({
 
             if (!startTime) startTime = timestamp
             const elapsed = timestamp - startTime
-            const progress = elapsed / duration // 0 to 1 = position of wave center
+            const progress = elapsed / duration
 
             if (progress > 1.3) {
-                // Sweep done, pause then restart
+                // sweep finished, pause then loop
                 pausing = true
                 pauseStart = timestamp
                 targetWeightsRef.current = new Array(chars).fill(baseWeight)
@@ -101,7 +105,7 @@ export default function HoverBoldText({
                 const distance = Math.abs(i - waveCenter)
                 if (distance > waveRadius) return baseWeight
                 const t = 1 - distance / waveRadius
-                const eased = 1 - Math.pow(1 - t, 3)
+                const eased = 1 - Math.pow(1 - t, 3) // cubic ease-out
                 return Math.round(baseWeight + (hoverWeight - baseWeight) * eased)
             })
 
@@ -125,6 +129,7 @@ export default function HoverBoldText({
 
             const mouseX = e.clientX
 
+            // figure out how close the mouse is to each character and set weights accordingly
             const newTargets = text.split('').map((_, i) => {
                 const charEl = charRefs.current[i]
                 if (!charEl) return baseWeight
@@ -161,7 +166,7 @@ export default function HoverBoldText({
         }
     }, [])
 
-    // Group characters into words so words don't break across lines
+    // group chars into words so they wrap together at line breaks
     const words = text.split(' ')
     let charIndex = 0
 
@@ -176,7 +181,7 @@ export default function HoverBoldText({
         >
             {words.map((word, wi) => {
                 const startIdx = charIndex
-                charIndex += word.length + 1 // +1 for space
+                charIndex += word.length + 1
 
                 return (
                     <span key={wi} style={{ whiteSpace: 'nowrap' }}>
@@ -195,7 +200,6 @@ export default function HoverBoldText({
                                 </span>
                             )
                         })}
-                        {/* Space between words */}
                         {wi < words.length - 1 && (
                             <span
                                 ref={(el) => { charRefs.current[startIdx + word.length] = el }}

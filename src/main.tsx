@@ -6,7 +6,7 @@ import './index.css'
 import App from './App'
 import { applyCursors } from './lib/cursors'
 
-// Initialize cursors with default theme accent
+// set up themed cursors with the default rose accent
 applyCursors('#B71036')
 
 createRoot(document.getElementById('root')!).render(

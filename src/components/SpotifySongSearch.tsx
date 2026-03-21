@@ -17,7 +17,7 @@ export default function SpotifySongSearch({ onTrackSelect, currentUrl, className
     const containerRef = useRef<HTMLDivElement>(null)
     const debounceTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
 
-    // Close dropdown on outside click
+    // close dropdown on outside click
     useEffect(() => {
         function handleClickOutside(e: MouseEvent) {
             if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -28,7 +28,7 @@ export default function SpotifySongSearch({ onTrackSelect, currentUrl, className
         return () => document.removeEventListener('mousedown', handleClickOutside)
     }, [])
 
-    // Debounced search — handles both text search AND link pasting
+    // handles both text search (debounced) and direct link pasting
     useEffect(() => {
         if (!query.trim()) {
             setResults([])
@@ -36,7 +36,7 @@ export default function SpotifySongSearch({ onTrackSelect, currentUrl, className
             return
         }
 
-        // If it's a Spotify link, validate and select directly
+        // if they pasted a spotify link, just use it directly
         if (isValidSpotifyUrl(query.trim())) {
             onTrackSelect(query.trim())
             setResults([])
@@ -67,7 +67,6 @@ export default function SpotifySongSearch({ onTrackSelect, currentUrl, className
 
     return (
         <div ref={containerRef} className={className}>
-            {/* Search input */}
             <div className="relative">
                 <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
                     {isSearching ? (
@@ -90,7 +89,6 @@ export default function SpotifySongSearch({ onTrackSelect, currentUrl, className
                 />
             </div>
 
-            {/* Results dropdown */}
             {showDropdown && (
                 <div className="mt-2 rounded-2xl bg-accent overflow-hidden max-h-[240px] overflow-y-auto animate-[slideDown_0.2s_ease-out]">
                     {results.map((track) => (
@@ -100,7 +98,6 @@ export default function SpotifySongSearch({ onTrackSelect, currentUrl, className
                             onClick={() => handleSelectTrack(track)}
                             className="w-full flex items-center gap-3 px-4 py-3 hover:bg-fg/10 transition-colors text-left cursor-pointer"
                         >
-                            {/* Album art */}
                             <div className="flex-shrink-0 w-10 h-10 rounded-lg overflow-hidden bg-fg/10">
                                 {track.albumImage ? (
                                     <img src={track.albumImage} alt="" className="w-full h-full object-cover" loading="lazy" />
@@ -121,7 +118,6 @@ export default function SpotifySongSearch({ onTrackSelect, currentUrl, className
                 </div>
             )}
 
-            {/* Selected indicator */}
             {currentUrl && !showDropdown && (
                 <div className="mt-2 flex items-center gap-2 text-xs text-green-400 font-medium">
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>

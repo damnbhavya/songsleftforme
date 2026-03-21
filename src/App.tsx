@@ -1,7 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
 
-// Lazy load pages for code splitting
+// lazy-load pages so the initial bundle stays small
 const Home = lazy(() => import('./pages/Home'))
 const Create = lazy(() => import('./pages/Create'))
 const About = lazy(() => import('./pages/About'))

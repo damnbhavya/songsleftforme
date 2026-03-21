@@ -17,7 +17,7 @@ export function isValidSpotifyUrl(url: string): boolean {
     return extractSpotifyTrackId(url) !== null
 }
 
-// Global: track all active embed controllers so only one plays at a time
+// global playback tracking — only one embed plays at a time
 const activeControllers = new Set<{ pause: () => void }>()
 let currentlyPlaying: { pause: () => void } | null = null
 
@@ -31,14 +31,13 @@ function unregisterController(controller: { pause: () => void }) {
 }
 
 function onPlaybackStarted(controller: { pause: () => void }) {
-    // Pause any other playing embed
     if (currentlyPlaying && currentlyPlaying !== controller) {
         try { currentlyPlaying.pause() } catch { }
     }
     currentlyPlaying = controller
 }
 
-// Load the Spotify IFrame API once
+// spotify iframe api — loaded once, shared across all embeds
 let iframeAPIReady = false
 let iframeAPICallbacks: (() => void)[] = []
 
@@ -46,6 +45,7 @@ function ensureSpotifyAPI(callback: () => void) {
     if (iframeAPIReady) { callback(); return }
     iframeAPICallbacks.push(callback)
 
+    // don't inject the script twice
     if (document.querySelector('script[src="https://open.spotify.com/embed/iframe-api/v1"]')) return
 
     const script = document.createElement('script')
@@ -69,7 +69,7 @@ export default function SpotifyEmbed({ url, compact = false }: SpotifyEmbedProps
     const embedRef = useRef<HTMLDivElement>(null)
     const controllerRef = useRef<any>(null)
 
-    // Lazy load with IntersectionObserver
+    // only load the iframe when the card scrolls into view
     useEffect(() => {
         if (!containerRef.current) return
         const observer = new IntersectionObserver(
@@ -80,11 +80,11 @@ export default function SpotifyEmbed({ url, compact = false }: SpotifyEmbedProps
         return () => observer.disconnect()
     }, [])
 
-    // Create Spotify embed via IFrame API
+    // create the embed once visible
     useEffect(() => {
         if (!isVisible || !trackId || !embedRef.current) return
 
-        // Newsprint = dark Spotify, everything else = light (default)
+        // newsprint theme gets dark spotify, everything else stays default (light)
         const isNewsprint = document.documentElement.classList.contains('theme-newsprint')
 
         ensureSpotifyAPI(() => {
@@ -106,6 +106,7 @@ export default function SpotifyEmbed({ url, compact = false }: SpotifyEmbedProps
                 registerController(controller)
                 setIsLoaded(true)
 
+                // pause other embeds when this one starts playing
                 controller.addListener('playback_update', (e: any) => {
                     if (e.data.isPaused === false) {
                         onPlaybackStarted(controller)
@@ -134,7 +135,6 @@ export default function SpotifyEmbed({ url, compact = false }: SpotifyEmbedProps
 
     return (
         <div ref={containerRef} style={{ minHeight: height, cursor: 'auto' }} className="relative rounded-xl overflow-hidden">
-            {/* Skeleton placeholder */}
             {!isLoaded && (
                 <div className="absolute inset-0 bg-fg-dark/10 animate-pulse rounded-xl" />
             )}

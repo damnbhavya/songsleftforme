@@ -10,7 +10,7 @@ if (!isConfigured) {
     console.warn('⚠️ Supabase credentials missing. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env')
 }
 
-// Use a dummy URL if not configured to prevent crash
+// fall back to a dummy url so the app doesn't crash without credentials
 export const supabase = createClient(
     isConfigured ? supabaseUrl : 'https://placeholder.supabase.co',
     isConfigured ? supabaseAnonKey : 'placeholder'

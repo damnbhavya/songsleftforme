@@ -37,6 +37,7 @@ export default function Create() {
         setSubmitError(null)
 
         try {
+            // sanitize everything before it hits the database
             const sanitizedMessage = message.trim()
                 ? DOMPurify.sanitize(message.trim())
                 : null
@@ -81,7 +82,6 @@ export default function Create() {
 
     return (
         <div className="min-h-screen grid-bg">
-            {/* Back button — matches FAB style, fixed top-left */}
             <Link
                 to="/"
                 className="fixed top-5 left-5 z-50 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-accent/80 text-fg flex items-center justify-center hover:bg-accent transition-all duration-200 cursor-pointer shadow-lg backdrop-blur-sm"
@@ -89,7 +89,6 @@ export default function Create() {
                 <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
             </Link>
 
-            {/* About button — top right */}
             <Link
                 to="/about"
                 className="fixed top-5 right-5 z-50 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-accent/80 text-fg flex items-center justify-center hover:bg-accent transition-all duration-200 cursor-pointer shadow-lg backdrop-blur-sm"
@@ -97,22 +96,20 @@ export default function Create() {
                 <AudioLines className="w-5 h-5 sm:w-6 sm:h-6" />
             </Link>
 
-            {/* Header */}
             <div className="text-center pt-20 pb-6 px-4 animate-fade-up">
                 <h1 className="text-5xl sm:text-6xl md:text-7xl font-brand italic text-fg whitespace-nowrap">
                     <HoverBoldText text="dedicate a song" baseWeight={400} hoverWeight={800} radius={3} />
                 </h1>
             </div>
 
-            {/* Interactive Card Form */}
             <form onSubmit={handleSubmit} className="max-w-lg mx-auto px-6 pb-20">
                 <div className="rounded-3xl bg-card-bg shadow-card p-6 sm:p-8 transition-all duration-300 animate-fade-up delay-1">
-                    {/* To: Name — accent bg pill */}
+                    {/* recipient name — auto-resizing input inside an accent pill */}
                     <div className="mb-5">
                         <div className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-accent">
                             <span className="text-base font-bold text-fg">to:</span>
                             <div className="relative">
-                                {/* Hidden measuring span */}
+                                {/* invisible span that sizes the input to fit the text */}
                                 <span className="invisible text-base font-bold whitespace-pre" aria-hidden="true">
                                     {recipientName || 'someone'}
                                 </span>
@@ -128,7 +125,6 @@ export default function Create() {
                         </div>
                     </div>
 
-                    {/* Song Search / Spotify Preview */}
                     <div className="mb-5">
                         {spotifyUrl && isValidSpotifyUrl(spotifyUrl) ? (
                             <div>
@@ -149,7 +145,6 @@ export default function Create() {
                         )}
                     </div>
 
-                    {/* Message — rounded border, always visible */}
                     <div className="mb-5">
                         <textarea
                             placeholder="what you wish you could say..."
@@ -172,14 +167,12 @@ export default function Create() {
                     </div>
                 </div>
 
-                {/* Error */}
                 {submitError && (
                     <div className="mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-sm text-red-400 font-medium">
                         {submitError}
                     </div>
                 )}
 
-                {/* Send Button — below the card */}
                 <button
                     type="submit"
                     disabled={!isFormValid || isSubmitting}

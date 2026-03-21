@@ -1,8 +1,9 @@
-// Spotify Web API service using Client Credentials flow
+// spotify web api — uses client credentials flow (no user login needed)
 
 const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID || ''
 const CLIENT_SECRET = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET || ''
 
+// token cache so we're not hitting /api/token on every search
 let accessToken: string | null = null
 let tokenExpiry = 0
 
@@ -17,7 +18,7 @@ export interface SpotifyTrack {
 }
 
 async function getAccessToken(): Promise<string> {
-    // Return cached token if still valid (with 60s buffer)
+    // reuse token if it's still good (with a 60s buffer)
     if (accessToken && Date.now() < tokenExpiry - 60000) {
         return accessToken
     }
@@ -56,7 +57,7 @@ export async function searchTracks(query: string, limit = 5): Promise<SpotifyTra
         )
 
         if (!response.ok) {
-            // Token might have expired, clear and retry once
+            // 401 means the token expired — clear it and try once more
             if (response.status === 401) {
                 accessToken = null
                 tokenExpiry = 0
